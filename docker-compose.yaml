@@ -1,0 +1,47 @@
+﻿services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tasktracker-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: tasktracker
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - tasktracker-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./TaskProject
+      dockerfile: Dockerfile
+    container_name: tasktracker-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=tasktracker;Username=postgres;Password=postgres123
+      - JwtSettings__SecretKey=VerySuperSecretKeyThatIsAtLeast32CharactersLong123!@#
+      - JwtSettings__Issuer=TaskTrackerApi
+      - JwtSettings__Audience=TaskTrackerClient
+      - JwtSettings__ExpiresInMinutes=1440
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - tasktracker-network
+
+volumes:
+  postgres-data:
+
+networks:
+  tasktracker-network:
+    driver: bridge
