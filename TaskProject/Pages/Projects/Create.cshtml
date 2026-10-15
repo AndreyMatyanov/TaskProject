@@ -1,0 +1,31 @@
+﻿@page
+@model TaskProject.Pages.Projects.CreateModel
+@{
+    ViewData["Title"] = "Создать проект";
+}
+
+<div class="card">
+    <h2>Создание нового проекта</h2>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="error">@Model.ErrorMessage</div>
+    }
+    
+    <form method="post">
+        <div class="form-group">
+            <label asp-for="Project.Name">Название проекта</label>
+            <input asp-for="Project.Name" class="form-control" />
+            <span asp-validation-for="Project.Name" class="validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Project.Description">Описание проекта</label>
+            <textarea asp-for="Project.Description" rows="4" placeholder="Опишите проект"></textarea>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn">Создать проект</button>
+            <a asp-page="Index" class="btn-secondary">Отмена</a>
+        </div>
+    </form>
+</div>

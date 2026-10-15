@@ -1,0 +1,50 @@
+﻿@page
+@model TaskProject.Pages.Tasks.EditModel
+@{
+    ViewData["Title"] = "Редактирование задачи";
+}
+
+<div class="card">
+    <h2>Редактирование задачи</h2>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="error">@Model.ErrorMessage</div>
+    }
+
+    <form method="post">
+        <input typeof="hidden" asp-for="TaskId" />
+
+        <div class="form-group">
+            <label asp-for="Task.Title">Название</label>
+            <input asp-for="Task.Title" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Task.Description">Описание</label>
+            <textarea asp-for="Task.Description" class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+            <label asp-for="Task.Status">Статус</label>
+            <select asp-for="Task.Status" class="form-control" asp-items="Model.Statuses">
+                <option value="">Выберите статус</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label asp-for="Task.Priority">Приоритет</label>
+            <select asp-for="Task.Priority" class="form-control" asp-items="Model.Priorities">
+                <option value="">Выберите приоритет</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label asp-for="Task.ProjectId">Проект</label>
+            <select asp-for="Task.ProjectId" class="form-control" asp-items="Model.Projects">
+                <option value="">Выберите проект</option>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">Сохранить</button>
+            <a asp-page="Index" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+</div>

@@ -1,20 +1,21 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
-using System.Text;
 using Serilog;
 using Serilog.Events;
+using System.Text;
+using TaskProject;
 using TaskProject.Data;
 using TaskProject.DTOs;
 using TaskProject.Mapping;
 using TaskProject.Middleware;
 using TaskProject.Services;
 using TaskProject.Validators;
-using TaskProject;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -38,8 +39,11 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
 
+
     // Add services to the container.
     builder.Host.UseSerilog();
+
+    builder.Services.AddRazorPages();
 
     builder.Services.AddControllers(options =>
     {
@@ -93,6 +97,7 @@ try
     builder.Services.AddAutoMapper(CFG => CFG.AddProfile<MappingProfile>());
 
     var jwt = builder.Configuration.GetSection("JwtSettings");
+
     builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -111,9 +116,60 @@ try
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt["SecretKey"]!)),
             ClockSkew = TimeSpan.FromMinutes(2)
         };
+    })
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login";
+        options.LogoutPath = "/Logout";
+        options.AccessDeniedPath = "/Login";
+        options.Cookie.Name = "TaskTracker.Auth";
+        options.ExpireTimeSpan = TimeSpan.FromHours(24);
+        options.SlidingExpiration = true;
+
+        options.Events = new CookieAuthenticationEvents
+        {
+            OnRedirectToLogin = context =>
+            {
+                if (context.Request.Path.StartsWithSegments("/api"))
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return Task.CompletedTask;
+                }
+
+                context.Response.Redirect(context.RedirectUri);
+                return Task.CompletedTask;
+            },
+            OnRedirectToAccessDenied = context =>
+            {
+                if (context.Request.Path.StartsWithSegments("/api"))
+                {
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    return Task.CompletedTask;
+                }
+                context.Response.Redirect(context.RedirectUri);
+                return Task.CompletedTask;
+            }
+        };
     });
 
-    builder.Services.AddAuthorization();
+    builder.Services.AddAuthorization(options =>
+    {
+        options.DefaultPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+            .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme, JwtBearerDefaults.AuthenticationScheme)
+            .RequireAuthenticatedUser()
+            .Build();
+    });
+
+    builder.Services.AddAuthorization(options =>
+    {
+        // Политика по умолчанию: принимаем И Cookie, И JWT
+        options.DefaultPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+            .AddAuthenticationSchemes(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                JwtBearerDefaults.AuthenticationScheme)
+            .RequireAuthenticatedUser()
+            .Build();
+    });
 
     var app = builder.Build();
 
@@ -142,10 +198,13 @@ try
         app.MapScalarApiReference();
     }
 
+    app.UseStaticFiles();
+
     app.UseMiddleware<ExceptionHandlingMiddleware>();
     app.UseHttpsRedirection();
     app.UseAuthentication();
     app.UseAuthorization();
+    app.MapRazorPages();
     app.MapControllers();
 
     app.Run();

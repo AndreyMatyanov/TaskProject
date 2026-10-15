@@ -1,0 +1,32 @@
+﻿@page
+@model TaskProject.Pages.Tasks.DeleteModel
+@{
+    ViewData["Title"] = "Удаление задачи";
+}
+
+<div class="card">
+    <p>Вы уверены, что хотите удалить эту задачу?</p>
+    <p class="task-preview">@Model.Task.Title</p>
+    <p class="warning-text">Это действие нельзя отменить.</p>
+</div>
+
+<div class="task-details">
+    <div>
+        <strong>Статус:</strong>
+        <span class="status-badge status-@Model.Task.Status.ToLower()">@Model.Task.Status</span>
+    </div>
+    <div><strong>Приоритет:</strong> @Model.Task.Priority</div>
+    <div><strong>Проект:</strong> @Model.Task.Project.Name</div>
+    @if (!string.IsNullOrEmpty(Model.Task.Description))
+    {
+        <div><strong>Описание:</strong> @Model.Task.Description</div>
+    }
+</div>
+
+<form method="post">
+    <div class="form-actions">
+        <button type="submit" class="btn-danger">Да, удалить</button>
+        <a asp-page="Index" class="btn-secondary">Отмена</a>
+    </div>
+</form>
+</div>

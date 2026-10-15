@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>@ViewData["Title"] - TaskTracker</title>
+        <link rel="stylesheet" href="~/css/site.css" />
+    </head>
+    <body>
+        <header class="header">
+            <h1>TaskTracker</h1>
+            <nav>
+                <a href="/">Главная</a>
+                <a href="/tasks">Задачи</a>
+                <a href="/projects">Проекты</a>
+                <a href="/logout">Выйти</a>
+            </nav>
+        </header>
+
+        <main class="container">
+            @RenderBody()
+        </main>
+        
+        <footer class="footer">
+            <p>&copy; 2023 TaskTracker. Все права защищены.</p>
+        </footer>
+
+    <script src="~/js/site.js"></script>
+    </body>
+</html>

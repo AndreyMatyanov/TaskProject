@@ -1,0 +1,53 @@
+﻿@page
+@model TaskProject.Pages.Projects.IndexModel
+@{
+    ViewData["Title"] = "Мои проекты"; 
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="error">
+        @Model.ErrorMessage
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="info">
+        @Model.SuccessMessage
+    </div>
+}
+
+<div class="page-header">
+    <h1>Мои проекты</h1>
+    <a asp-page="Create" class="btn btn-primary">Создать проект</a>
+</div>
+
+<div class="card">
+    @if (Model.Projects.Any())
+    {
+        @foreach (var project in Model.Projects)
+        {
+            <div class="project-item">
+                <div class="project-info">
+                    <div class="project-title">@project.Name</div>
+                    @if (!string.IsNullOrEmpty(project.Description))
+                    {
+                        <div class="project-description">@project.Description</div>
+                    }
+                </div>
+                <div class="project-actions">
+                    <a asp-page="Edit" asp-route-id="@project.Id" class="btn-icon" title="Редактировать">✏️</a>
+                    <a asp-page="Delete" asp-route-id="@project.Id" class="btn-icon btn-icon-danger" title="Удалить">🗑️</a>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-state">
+            <p>📁 У тебя пока нет проектов</p>
+            <a asp-page="Create" class="btn btn-primary">Создать первый проект</a>
+        </div>
+    }
+</div>

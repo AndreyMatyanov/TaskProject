@@ -1,0 +1,34 @@
+﻿@page
+@model TaskProject.Pages.Projects.EditModel
+@{
+    ViewData["Title"] = "Редактировать проект";
+}
+
+<div class="card">
+    <h2>Редактирование проекта</h2>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="error">@Model.ErrorMessage</div>
+    }
+    
+    <form method="post">
+        <input type="hidden" asp-for="ProjectId" />
+
+        <div class="form-group">
+            <label asp-for="Project.Name">Название проекта</label>
+            <input asp-for="Project.Name" class="form-control" />
+            <span asp-validation-for="Project.Name" class="validation-error"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Project.Description">Описание проекта</label>
+            <textarea asp-for="Project.Description" class="form-control"></textarea>
+            <span asp-validation-for="Project.Description" class="validation-error"></span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">Сохранить</button>
+            <a asp-page="Index" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+</div>

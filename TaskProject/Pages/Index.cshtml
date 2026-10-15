@@ -1,0 +1,57 @@
+﻿@page
+@model TaskProject.Pages.IndexModel
+@{
+    ViewData["Title"] = "Главная страница";
+}
+
+<div class="card">
+    <h2>Добро пожаловать, @Model.UserName!</h2>
+</div>
+
+<div class="stats">
+    <div class="card">
+        <div class="stat-number">@Model.TotalTasks</div>
+        <div class="stat-label">Всего задач</div>
+    </div>
+    <div class="card">
+        <div class="stat-number">@Model.TodoTask</div>
+        <div class="stat-label">В очереди</div>
+    </div>
+    <div class="card">
+        <div class="stat-number">@Model.InProgressTasks</div>
+        <div class="stat-label">В работе</div>
+    </div>
+    <div class="card">
+        <div class="stat-number">@Model.DoneTasks</div>
+        <div class="stat-label">Завершено</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Последние задачи</h2>
+    @if (Model.Tasks.Any())
+    {
+        @foreach (var task in Model.Tasks.Take(5))
+        {
+            <div class="task-item">
+                <div>
+                    <div class="task-title">@task.Title</div>
+                    <div class="task-meta">
+                        <span class="status-badge status-@task.Status.ToLower()">@task.Status</span>
+                        <span class="project-badge"> @task.Project</span>
+                    </div>
+                </div>
+            </div>
+        }
+        <div style="text-align: center; margin-top: 20px;">
+            <a asp-page="/Tasks/Index" class="btn">Смотреть все задачи</a>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <p>У тебя пока что нет задач</p>
+            <a asp-page="/Tasks/Create" class="btn">Создать первую задачу</a>
+        </div>
+    }
+</div>

@@ -1,0 +1,23 @@
+﻿@page
+@model TaskProject.Pages.Projects.DeleteModel
+@{
+    ViewData["Title"] = "Удаление проекта";
+}
+
+<div class="card">
+    <p>Вы уверены, что хотите удалить этот проект?</p>
+    <p class="task-preview">@Model.Project.Name</p>
+    <p class="warning-text">Это действие нельзя отменить.</p>
+</div>
+
+<div class="task-details">
+    @if (!string.IsNullOrEmpty(Model.Project.Description))
+    {
+        <div><strong>Описание:</strong> @Model.Project.Description</div>
+    }
+</div>
+
+<form method="post">
+    <button type="submit" class="btn btn-danger">Удалить</button>
+    <a asp-page="Index" class="btn btn-secondary">Отмена</a>
+</form>

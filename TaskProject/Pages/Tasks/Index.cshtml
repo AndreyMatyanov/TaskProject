@@ -1,0 +1,58 @@
+﻿@page
+@model TaskProject.Pages.Tasks.IndexModel
+@{
+    ViewData["Title"] = "Мои задачи";
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="error">
+        @Model.ErrorMessage
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="info">
+        @Model.SuccessMessage
+    </div>
+}
+
+<div class="page-header">
+    <h2>Мои задачи</h2>
+    <a asp-page="Create" class="btn">Создать задачу</a>
+</div>
+
+<div class="card">
+    @if (Model.Tasks.Any())
+    {
+        @foreach (var task in Model.Tasks)
+        {
+            <div class="task-item">
+                <div class="task-info">
+                    <div class="task-title">@task.Title</div>
+                    @if (!string.IsNullOrEmpty(task.Description))
+                    {
+                        <div class="task-description">@task.Description</div>
+                    }
+                    <div class="task-meta">
+                        <span class="status-badge status-@task.Status.ToLower()">@task.Status</span>
+                        <span class="priority-badge">@task.Priority</span>
+                        <span class="project-badge">📁 @task.Project.Name</span>
+                    </div>
+                </div>
+                <div class="task-actions">
+                    <a asp-page="Edit" asp-route-id="@task.Id" class="btn-icon" title="Редактировать">✏️</a>
+                    <a asp-page="Delete" asp-route-id="@task.Id" class="btn-icon btn-icon-danger" title="Удалить">🗑️</a>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-state">
+            <p>🚀 У тебя пока нет задач</p>
+            <a asp-page="Create" class="btn">Создать первую задачу</a>
+        </div>
+    }
+</div>

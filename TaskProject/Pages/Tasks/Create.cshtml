@@ -1,0 +1,53 @@
+﻿@page
+@model TaskProject.Pages.Tasks.CreateModel
+
+@{
+    ViewData["Title"] = "Создать задачу";
+}
+
+<div class="card">
+    <h2>➕ Создать новую задачу</h2>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="error">@Model.ErrorMessage</div>
+    }
+
+    <form method="post">
+        <div class="form-group">
+            <label asp-for="Task.Title">Название задачи</label>
+            <input asp-for="Task.Title" placeholder="Например: Подготовить презентацию" />
+            <span asp-validation-for="Task.Title" class="validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Task.Description">Описание</label>
+            <textarea asp-for="Task.Description" rows="4" placeholder="Опишите задачу подробнее..."></textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label asp-for="Task.ProjectId">Проект</label>
+                <select asp-for="Task.ProjectId" asp-items="Model.Projects">
+                    <option value="">-- Выберите проект --</option>
+                </select>
+                <span asp-validation-for="Task.ProjectId" class="validation-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Task.Status">Статус</label>
+                <select asp-for="Task.Status" asp-items="Model.Statuses"></select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Task.Priority">Приоритет</label>
+                <select asp-for="Task.Priority" asp-items="Model.Priority"></select>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">Создать задачу</button>
+            <a asp-page="Index" class="btn-secondary">Отмена</a>
+        </div>
+    </form>
+</div>
