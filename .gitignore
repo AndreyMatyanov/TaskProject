@@ -27,3 +27,5 @@ docker-compose.override.yml
 # User secrets
 secrets.json
 appsettings.Development.json
+github
+github.pub
